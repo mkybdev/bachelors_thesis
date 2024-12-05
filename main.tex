@@ -1,0 +1,144 @@
+\documentclass[xelatex,ja=standard,fontsize=10.5pt]{bxjsreport}
+\setpagelayout{top=10truemm,bottom=30truemm,headheight=10truemm}
+
+\setCJKmainfont[BoldFont=ToppanBunkyuMidashiMinchoStdN-ExtraBold]{ToppanBunkyuMinchoPr6N-Regular}
+\setCJKsansfont[BoldFont=ToppanBunkyuGothicPr6N-DB]{ToppanBunkyuGothicPr6N-Regular}
+\setCJKmonofont[BoldFont=ToppanBunkyuGothicPr6N-DB]{ToppanBunkyuGothicPr6N-Regular}
+\setmainfont{YuMin-Medium}[LetterSpace=3.0]
+
+\usepackage{abstract}
+\renewcommand{\abstractnamefont}{\sffamily\bfseries}
+
+\usepackage{tocloft}
+\renewcommand\cftchapnumwidth{3.75em}
+\renewcommand\cfttoctitlefont{\sffamily\Huge\bfseries}
+\renewcommand\cftchapfont{\sffamily\bfseries}
+
+% \usepackage{titlesec}
+% \titleformat{\chapter}
+%     {\sffamily\huge\bfseries}{\chaptertitlename\ \thechapter\ 章}{1em}{}
+% \titleformat{\section}
+%     {\sffamily\Large\bfseries}{\thesection}{1em}{}
+% \titleformat{\subsection}
+%     {\sffamily\large\bfseries}{\thesubsection}{1em}{}
+% \titleformat{\subsubsection}
+%     {\sffamily\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+\usepackage{geometry}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \vspace*{\fill}
+        \vspace{40pt}
+        {\Large 卒業論文}
+        \vspace{20pt} \\
+        {\huge .gitignoreファイルの実態調査および \\\vspace{10pt} リファクタリング手法の提案} \\
+        \vspace{160pt}
+        \begin{tabular}{rl}
+            {\Large 08232017} & {\LARGE 坂本洸亮}       \\
+            \vspace{10pt}                           \\
+            {\Large 指導教員}     & {\Large 中丸智貴 \ 助教}  \\
+            \vspace{-10pt}                          \\
+                              & {\Large 森畑明昌 \ 准教授}
+        \end{tabular}
+        \vspace{60pt} \\
+        {\Large 2025年1月}
+        \vspace{60pt} \\
+        {\Large 東京大学教養学部学際科学科総合情報学コース}
+        \vspace*{\fill}
+    \end{center}
+\end{titlepage}
+
+\begin{abstract}
+    ここに概要を書く。
+\end{abstract}
+
+\newgeometry{top=5truemm,bottom=20truemm}
+\setcounter{tocdepth}{2}
+\tableofcontents
+\thispagestyle{empty}
+\restoregeometry
+
+\mainmatter
+
+\pagestyle{headings}
+
+%
+\chapter{はじめに}
+
+\section{本研究の目的}
+
+\section{本研究の貢献}
+
+\section{関連研究}
+
+%
+\chapter{背景}
+
+\section{\textrm{gitignore}の各機能の利用状況}
+
+\subsection{仮説}
+
+\subsection{検証方法}
+
+\section{\textrm{gitignore}の記述の冗長性・アドホック性}
+
+\subsection{仮説}
+
+\subsection{検証方法}
+
+\section{\textrm{ignore}システム}
+
+\subsection{\textrm{ignore}システムの概要}
+
+\subsection{\textrm{ignore}システムで利用されるパターンマッチングシステム}
+
+\subsection{\textrm{ignore}システム間での意味論の比較}
+
+%
+\chapter{\textrm{gitignore}の各機能の利用状況の調査}
+
+\section{データセットの構築}
+
+\subsection{データの収集}
+
+\subsection{復元処理}
+
+\section{定量分析}
+
+\subsection{手法}
+
+\subsection{結果}
+
+\subsection{考察}
+
+%
+\chapter{リファクタリングアルゴリズム}
+
+\section{パターン制約の設計}
+
+\section{アルゴリズムの設計}
+
+\section{アルゴリズムの実装}
+
+\section{アルゴリズムの適用実験}
+
+\subsection{手法}
+
+\subsection{結果}
+
+\subsection{考察}
+
+%
+\chapter{おわりに}
+
+\backmatter
+
+\begin{thebibliography}{}
+    \bibitem{1} ここに参考文献を書く。
+\end{thebibliography}
+\clearpage
+
+\end{document}
