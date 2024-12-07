@@ -1,10 +1,13 @@
-\documentclass[xelatex,ja=standard,fontsize=10.5pt]{bxjsreport}
-\setpagelayout{top=10truemm,bottom=30truemm,headheight=10truemm}
+\documentclass[a4paper,xelatex,ja=standard,fontsize=11pt]{bxjsreport}
+\setpagelayout{top=30truemm,bottom=30truemm,left=20truemm,right=20truemm}
+\setlength\abovecaptionskip{11pt}
 
 \setCJKmainfont[BoldFont=ToppanBunkyuMidashiMinchoStdN-ExtraBold]{ToppanBunkyuMinchoPr6N-Regular}
 \setCJKsansfont[BoldFont=ToppanBunkyuGothicPr6N-DB]{ToppanBunkyuGothicPr6N-Regular}
 \setCJKmonofont[BoldFont=ToppanBunkyuGothicPr6N-DB]{ToppanBunkyuGothicPr6N-Regular}
 \setmainfont{YuMin-Medium}[LetterSpace=3.0]
+
+\newfontfamily\codefont{FiraCode-Regular}
 
 \usepackage{abstract}
 \renewcommand{\abstractnamefont}{\sffamily\bfseries}
@@ -25,37 +28,49 @@
 %     {\sffamily\normalsize\bfseries}{\thesubsubsection}{1em}{}
 
 \usepackage{geometry}
+\usepackage{url}
+\usepackage{listings}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+
+\renewcommand{\figurename}{図\;}
+\renewcommand{\tablename}{表\;}
+
+\newcommand{\myfootnote}[1]{\,\footnote{#1}\,}
+\newcommand{\figref}[1]{図\ref{#1}\,}
+\newcommand{\gitignore}{\,\texttt{.gitignore}ファイル}
 
 \begin{document}
 
 \begin{titlepage}
-    \begin{center}
-        \vspace*{\fill}
-        \vspace{40pt}
-        {\Large 卒業論文}
-        \vspace{20pt} \\
-        {\huge .gitignoreファイルの実態調査および \\\vspace{10pt} リファクタリング手法の提案} \\
-        \vspace{160pt}
-        \begin{tabular}{rl}
-            {\Large 08232017} & {\LARGE 坂本洸亮}       \\
-            \vspace{10pt}                           \\
-            {\Large 指導教員}     & {\Large 中丸智貴 \ 助教}  \\
-            \vspace{-10pt}                          \\
-                              & {\Large 森畑明昌 \ 准教授}
-        \end{tabular}
-        \vspace{60pt} \\
-        {\Large 2025年1月}
-        \vspace{60pt} \\
-        {\Large 東京大学教養学部学際科学科総合情報学コース}
-        \vspace*{\fill}
-    \end{center}
+	\begin{center}
+		\vspace*{\fill}
+		\vspace{40pt}
+		{\Large 卒業論文}
+		\vspace{20pt} \\
+		{\huge .gitignoreファイルの実態調査および \\\vspace{10pt} リファクタリング手法の提案} \\
+		\vspace{160pt}
+		\begin{tabular}{rl}
+			{\Large 08232017} & {\LARGE 坂本洸亮}       \\
+			\vspace{10pt}                           \\
+			{\Large 指導教員}     & {\Large 中丸智貴 \ 助教}  \\
+			\vspace{-10pt}                          \\
+			                  & {\Large 森畑明昌 \ 准教授}
+		\end{tabular}
+		\vspace{60pt} \\
+		{\Large 2025年1月}
+		\vspace{60pt} \\
+		{\Large 東京大学教養学部学際科学科総合情報学コース}
+		\vspace*{\fill}
+	\end{center}
 \end{titlepage}
 
 \begin{abstract}
-    ここに概要を書く。
+	ここに概要を書く．
 \end{abstract}
 
-\newgeometry{top=5truemm,bottom=20truemm}
+\newgeometry{top=0truemm,bottom=0truemm}
 \setcounter{tocdepth}{2}
 \tableofcontents
 \thispagestyle{empty}
@@ -64,9 +79,61 @@
 \mainmatter
 
 \pagestyle{headings}
+\newgeometry{top=30truemm,bottom=30truemm,left=20truemm,right=20truemm}
 
 %
 \chapter{はじめに}
+
+バージョン管理システムは，システムやソフトウェアの開発において，ソースコードや関連ファイルの変更履歴を記録し，必要に応じて確認・復元するための機能を提供する．
+その中でもGitは，高速で効率的なバージョン管理システムとして多くのプロジェクトで採用されている．
+Gitは分散型バージョン管理システムと呼ばれ，リポジトリを一つしか持たない集中型バージョン管理システムに対し，複数のリポジトリを運用するのが特徴である．
+メインサーバに配置された共有リポジトリを開発者が各自で複製し，それに対して独立して作業を行った後，それぞれの変更を統合する．
+このシステムによって，複数の開発者が並行して作業を行うことが可能となっている．
+
+このようなバージョン管理システムにおいて，管理対象となるファイルを適切に選択することは重要である．
+ソースコードやビルドファイルなど，変更履歴を管理する必要があるファイルに対して，バイナリファイルやログファイル，ライブラリを配置するディレクトリなどは管理対象外とすることが一般的である．
+これを実現するために，Gitでは\gitignore{}を用いる．
+
+\gitignore{}は，Gitの追跡の対象外とするファイルやディレクトリを指定するもので，リポジトリのルートディレクトリに原則配置される．
+Gitは\gitignore{}の各行で指定されたパターンにマッチするファイルやディレクトリを追跡の対象外とする．
+\gitignore{}は，現在追跡されていないファイルやディレクトリが未追跡の状態を保つことを目的とする．
+そのため，すでに追跡対象となっているファイルやディレクトリについては\gitignore{}で指定するだけでは除外できず，別途Gitのインデックスからファイルを除外する必要がある．
+
+\gitignore{}に記述するパターンとして，除外したいファイルやディレクトリのパスをそのまま利用することもできるが，\gitignore{}が提供する機能を活用すれば，より効率的で柔軟な記述が可能となる．
+\gitignore{}のパターンで利用できる機能は，メタ文字の形で提供される．
+メタ文字は，コンピュータプログラムにおいて特別な意味を持つ文字であり，正規表現など文字列を扱うシステムや，プログラミング言語における引用符など，さまざまな分野・文脈で利用されている．
+それ単体で意味を持つものや，隣接する文字に対して作用するもののほか，二つのメタ文字で文字列を囲むことで複数の文字列にマッチさせることができるものなどが存在する．
+
+\gitignore{}においては，正規表現で見られるような文字列のパターンマッチングに利用されるメタ文字のほか，ファイルやディレクトリを扱うための特殊なメタ文字を利用することも可能である．
+例として，ディレクトリの区切り文字を表すスラッシュ（\,\texttt{/}\,）や，
+ディレクトリを再帰的にマッチさせるglobstar\myfootnote{GNUによるBash Reference Manualでの呼称による．\\\url{https://www.gnu.org/software/bash/manual/bash.html}}（\,\texttt{**}\,）などが挙げられる．
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[node distance=5cm]
+		\node[draw, rectangle, align=center, inner sep=3mm, outer sep=3mm] (codeA) {
+			\lstset{basicstyle=\codefont, breaklines=true}
+			\begin{lstlisting}
+a/foo.txt
+a/bar.txt
+b/a.pyo
+b/b.pyc
+            \end{lstlisting}
+		};
+		\node[draw, rectangle, align=center, right of=codeA, inner sep=3mm, outer sep=3mm] (codeB) {
+			\lstset{basicstyle=\codefont, breaklines=true}
+			\begin{lstlisting}
+a/*.txt
+b/?.py[co]
+            \end{lstlisting}
+		};
+		\draw[->, >=Stealth] (codeA) -- (codeB);
+	\end{tikzpicture}
+	\caption{\gitignore{}の記述例}
+	\label{fig:gitignore-example}
+\end{figure}
+
+\figref{fig:gitignore-example}に，\gitignore{}の記述例を示す．
 
 \section{本研究の目的}
 
@@ -113,7 +180,7 @@
 \subsection{結果}
 
 %
-\chapter{\textrm{gitignore}のリファクタリングアルゴリズム}
+\chapter[\textrm{gitignore}のリファクタリングアルゴリズム]{\textrm{gitignore}の\\リファクタリングアルゴリズム}
 
 \section{パターン制約の設計}
 
@@ -136,7 +203,7 @@
 \backmatter
 
 \begin{thebibliography}{}
-    \bibitem{1} ここに参考文献を書く。
+	\bibitem{1} ここに参考文献を書く．
 \end{thebibliography}
 \clearpage
 
